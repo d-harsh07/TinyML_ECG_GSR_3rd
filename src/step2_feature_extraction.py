@@ -1,27 +1,22 @@
+print("STEP 2 STARTED")
+
 import numpy as np
 import pandas as pd
 
-print("Loading raw ECG signal...")
-signal = np.load("data/ecg_raw.npy")
+ecg = np.load("data/ecg_raw.npy")
 
 window = 200
 features = []
 labels = []
 
-# Simple proxy label (mean-based)
-threshold = np.mean(signal)
+threshold = np.mean(ecg)
 
-print("Extracting features...")
-
-for i in range(0, len(signal) - window, window):
-    seg = signal[i:i+window]
+for i in range(0, len(ecg) - window, window):
+    seg = ecg[i:i+window]
 
     feat = [
-        np.mean(seg),
         np.std(seg),
-        np.min(seg),
-        np.max(seg),
-        np.ptp(seg),   # peak-to-peak
+        np.ptp(seg),
         np.var(seg)
     ]
 
@@ -30,12 +25,11 @@ for i in range(0, len(signal) - window, window):
     features.append(feat)
     labels.append(label)
 
-df = pd.DataFrame(features, columns=[
-    "mean", "std", "min", "max", "ptp", "var"
-])
+df = pd.DataFrame(features, columns=["std", "ptp", "var"])
 df["label"] = labels
 
 df.to_csv("data/ecg_features.csv", index=False)
 
-print("ECG feature file saved")
-print("Feature shape:", df.shape)
+print("ECG features saved")
+print("Shape:", df.shape)
+print("STEP 2 FINISHED")

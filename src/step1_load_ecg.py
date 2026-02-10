@@ -1,35 +1,26 @@
 import numpy as np
 import os
 
-data_root = "data"
+print("STEP 1 STARTED")
+
 signals = []
-ecg_files = []
 
-# Walk through all subfolders to find ECG files
-for root, dirs, files in os.walk(data_root):
-    for file in files:
-        if file.lower().endswith(".dat"):
-            ecg_files.append(os.path.join(root, file))
+for root, _, files in os.walk("data"):
+    for f in files:
+        if f.endswith(".dat") or f.endswith(".csv"):
+            try:
+                arr = np.loadtxt(os.path.join(root, f), delimiter=",")
+                signals.append(arr.flatten())
+            except:
+                pass
 
-print(f"Total ECG files found: {len(ecg_files)}")
+if len(signals) == 0:
+    raise ValueError("No ECG files found in data folder")
 
-if len(ecg_files) == 0:
-    raise ValueError("No ECG .dat files found. Check folder structure.")
+ecg = np.concatenate(signals)
 
-# Load ECG signals
-for file in ecg_files:
-    try:
-        signal = np.loadtxt(file, delimiter=",")
-        signal = signal.flatten()
-        signals.append(signal)
-    except Exception as e:
-        print(f"Skipping {file} due to error: {e}")
+np.save("data/ecg_raw.npy", ecg)
 
-# Concatenate all signals
-signals = np.concatenate(signals)
-
-# Save combined ECG signal
-np.save("data/ecg_raw.npy", signals)
-
-print("ECG raw signal loaded successfully")
-print("Final ECG signal shape:", signals.shape)
+print("ECG raw saved")
+print("ECG shape:", ecg.shape)
+print("STEP 1 FINISHED")
