@@ -20,6 +20,3 @@ This project implements a TinyML-based multimodal stress classification system u
 - scikit-learn
 - micromlgen
 - VS Code
-
-## Note
-Raw datasets are excluded from version control due to size constraints.
